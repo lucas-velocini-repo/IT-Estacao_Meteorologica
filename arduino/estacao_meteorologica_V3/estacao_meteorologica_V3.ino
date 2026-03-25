@@ -113,6 +113,7 @@ void readSensors() { // Função para ler sensores (executa a cada 11s no loop)
 
   //JSON
   lastJsonData = "{";
+  lastJsonData += "\"device_name\": \"estacao piloto\",";
   lastJsonData += "\"pm\":{";
   lastJsonData += "\"1.0\":" + String(m.mc_1p0, 2) + ",";
   lastJsonData += "\"2.5\":" + String(m.mc_2p5, 2) + ",";
@@ -167,6 +168,7 @@ void sendPost() {
 void readSensorsSim() { // Função para ler sensores (executa a cada 5s)
   //JSON
   lastJsonData = "{";
+  lastJsonData += "\"device_name\": \"estacao piloto\",";
   lastJsonData += "\"pm\":{";
   lastJsonData += "\"1.0\":" + String(random(0, 101)/100.0, 2) + ",";
   lastJsonData += "\"2.5\":" + String(random(0, 101)/100.0, 2) + ",";
