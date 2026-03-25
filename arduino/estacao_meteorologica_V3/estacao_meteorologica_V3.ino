@@ -19,9 +19,9 @@ unsigned long lastReadTime = 0;
 const unsigned long readInterval = 5000; //GERAL (11000 quando com sensores)
 String lastJsonData = "{}";
 
-const char* ssid = "Lucy-WiFi";
-const char* password = "Lucydog10@";                              //WIFI e comunicação          
-const char* serverUrlDados = "http://192.168.15.11:8000/dados"; 
+const char* ssid = "STUDIOCONTAINER9";
+const char* password = "CONTAINERAP9";                              //WIFI e comunicação          
+const char* serverUrlDados = "http://192.168.1.101:8000/dados"; 
 
 
 //int16_t ret;

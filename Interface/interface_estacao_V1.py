@@ -1,4 +1,4 @@
-# streamlit run "D:\Documentos\Lucas\Atalhos\Unicamp\Programas\IT-Iniciacao_Tecnologica\interface_estacao_V1.py"
+# streamlit run "C:\Users\Lucas Velocini\Desktop\Atalhos\Unicamp\IT-Estacao_Meteorologica\interface_estacao_V1.py"
 
 import streamlit as st
 import requests
@@ -12,7 +12,7 @@ st.title("Monitoramento em Tempo Real — Estação Meteorológica")
 st.markdown("Visualização ao vivo dos sensores conectados ao ESP32")
 
 # CONFIGURAÇÃO DO ENDEREÇO DO ESP32
-svr_ip = st.text_input("Endereço IP do Servidor", "192.168.15.11:8000")
+svr_ip = st.text_input("Endereço IP do Servidor", "192.168.1.101:8000")
 url = f"http://{svr_ip}/dados"
 
 # ÁREA DE ATUALIZAÇÃO AUTOMÁTICA

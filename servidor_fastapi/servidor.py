@@ -1,4 +1,4 @@
-# cd D:\Documentos\Lucas\Atalhos\Unicamp\Programas\IT-Iniciacao_Tecnologica\fastapi_esp_test
+# cd C:\Users\Lucas Velocini\Desktop\Atalhos\Unicamp\IT-Estacao_Meteorologica\fastapi_esp_test
 # uvicorn fastapi_esp:app --reload --host 0.0.0.0 --port 8000
 
 from fastapi import FastAPI
