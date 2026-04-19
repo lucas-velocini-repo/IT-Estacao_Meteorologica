@@ -35,9 +35,15 @@
     </property>
     <item>
      <widget class="QFrame" name="frmTopo">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>40</height>
+       </size>
+      </property>
       <property name="styleSheet">
        <string notr="true">QFrame{
-border-bottom: 0.5px solid rgba(235, 235, 235, 100);
+border-bottom: 2px solid rgba(235, 235, 235, 100);
 }</string>
       </property>
       <property name="frameShape">
@@ -72,7 +78,7 @@ border-bottom: 0.5px solid rgba(235, 235, 235, 100);
           <widget class="QLabel" name="lblTitulo">
            <property name="font">
             <font>
-             <family>Segoe UI Semibold</family>
+             <family>Segoe UI Black</family>
              <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
@@ -161,24 +167,66 @@ QPushButton:pressed {
         <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="frmBotoes">
+        <widget class="QFrame" name="frmModulos">
+         <property name="maximumSize">
+          <size>
+           <width>300</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <widget class="QLineEdit" name="edtBusca">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>20</y>
-            <width>231</width>
-            <height>31</height>
-           </rect>
+         <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,1">
+          <property name="leftMargin">
+           <number>9</number>
           </property>
-          <property name="styleSheet">
-           <string notr="true">QLineEdit {
+          <property name="topMargin">
+           <number>9</number>
+          </property>
+          <property name="rightMargin">
+           <number>9</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="frmBusca">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLineEdit" name="edtBusca">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLineEdit {
     background-color: rgb(50, 50, 50);
     color: #ebebeb;
 
@@ -211,11 +259,26 @@ QLineEdit {
 QLineEdit::placeholder {
     color: rgb(140, 140, 140);
 }</string>
-          </property>
-          <property name="placeholderText">
-           <string>Buscar...</string>
-          </property>
-         </widget>
+               </property>
+               <property name="placeholderText">
+                <string>Buscar...</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frmListaModulos">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -241,6 +304,18 @@ QLineEdit::placeholder {
           </property>
           <item>
            <widget class="QScrollArea" name="scrBotoes">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>49</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>49</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">QScrollArea {
     border: none;
@@ -283,7 +358,7 @@ QScrollBar::sub-line:horizontal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>903</width>
+               <width>928</width>
                <height>55</height>
               </rect>
              </property>
@@ -295,7 +370,7 @@ QScrollBar::sub-line:horizontal {
     background-color: rgb(245, 245, 245);
     color: black;
 
-    border: 1px solid rgb(210, 210, 210);
+    border: 2px solid rgb(210, 210, 210);
     border-radius: 10px;
 
     padding: 8px 16px;
@@ -309,23 +384,23 @@ QScrollBar::sub-line:horizontal {
 
 QPushButton:hover {
     background-color: rgb(255, 255, 255);
-    border: 1px solid rgb(190, 190, 190);
+    border: 2px solid rgb(190, 190, 190);
 }
 
 QPushButton:pressed {
     background-color: rgb(230, 230, 230);
-    border: 1px solid rgb(180, 180, 180);
+    border: 2px solid rgb(180, 180, 180);
 }
 
 /* foco estilo moderno (igual line edit) */
 QPushButton:focus {
-    border: 1px solid #3daee9;
+    border: 2px solid #3daee9;
 }
 
 /* opcional: botão &quot;ativo/selecionado&quot; */
 QPushButton:checked {
     background-color: rgb(225, 240, 252);
-    border: 1px solid #3daee9;
+    border: 2px solid #3daee9;
 }
 </string>
                 </property>
@@ -361,6 +436,24 @@ QPushButton:checked {
                    </property>
                    <property name="checkable">
                     <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line">
+                   <property name="styleSheet">
+                    <string notr="true">QFrame {
+    color: rgba(38, 38, 38, 100);
+}</string>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Plain</enum>
+                   </property>
+                   <property name="lineWidth">
+                    <number>1</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
                    </property>
                   </widget>
                  </item>

@@ -111,31 +111,36 @@ void readSensors() { // Função para ler sensores (executa a cada 11s no loop)
   aht.getEvent(&humidity, &temp);
   float pressure = bmp.readPressure() / 100.0F;
 
-  //JSON
   lastJsonData = "{";
+  lastJsonData += "\"device_id\": 1,";
   lastJsonData += "\"device_name\": \"estacao piloto\",";
+
+  lastJsonData += "\"timestamp\": " + String(millis()) + ",";
+  lastJsonData += "\"location\": {";
+  lastJsonData += "\"lat\": -23.5,";
+  lastJsonData += "\"lon\": -47.2";
+  lastJsonData += "},";
+
   lastJsonData += "\"pm\":{";
   lastJsonData += "\"1.0\":" + String(m.mc_1p0, 2) + ",";
   lastJsonData += "\"2.5\":" + String(m.mc_2p5, 2) + ",";
   lastJsonData += "\"4.0\":" + String(m.mc_4p0, 2) + ",";
   lastJsonData += "\"10.0\":" + String(m.mc_10p0, 2) + "},";
-  
+
   lastJsonData += "\"nc\":{";
   lastJsonData += "\"0.5\":" + String(m.nc_0p5, 2) + ",";
   lastJsonData += "\"1.0\":" + String(m.nc_1p0, 2) + ",";
   lastJsonData += "\"2.5\":" + String(m.nc_2p5, 2) + ",";
   lastJsonData += "\"4.0\":" + String(m.nc_4p0, 2) + ",";
   lastJsonData += "\"10.0\":" + String(m.nc_10p0, 2) + "},";
-  
+
   lastJsonData += "\"typical_size\":" + String(m.typical_particle_size, 2) + ",";
   lastJsonData += "\"light\":" + String(lux, 2) + ",";
   lastJsonData += "\"temperature\":" + String(temp.temperature, 2) + ",";
   lastJsonData += "\"humidity\":" + String(humidity.relative_humidity, 2) + ",";
   lastJsonData += "\"pressure\":" + String(pressure, 2);
-  lastJsonData += "}";
 
-  Serial.println(lastJsonData);
-}
+  lastJsonData += "}";
 */
 
 void sendPost() {
@@ -167,27 +172,33 @@ void sendPost() {
 
 void readSensorsSim() { // Função para ler sensores (executa a cada 5s)
   //JSON
-  lastJsonData = "{";
-  lastJsonData += "\"device_name\": \"estacao piloto\",";
-  lastJsonData += "\"pm\":{";
-  lastJsonData += "\"1.0\":" + String(random(0, 101)/100.0, 2) + ",";
-  lastJsonData += "\"2.5\":" + String(random(0, 101)/100.0, 2) + ",";
-  lastJsonData += "\"4.0\":" + String(random(0, 101)/100.0, 2) + ",";
-  lastJsonData += "\"10.0\":" + String(random(0, 101)/100.0, 2) + "},";
-  
-  lastJsonData += "\"nc\":{";
-  lastJsonData += "\"0.5\":" + String(random(0, 1001)/100.0, 2) + ",";
-  lastJsonData += "\"1.0\":" + String(random(0, 1001)/100.0, 2) + ",";
-  lastJsonData += "\"2.5\":" + String(random(0, 1001)/100.0, 2) + ",";
-  lastJsonData += "\"4.0\":" + String(random(0, 1001)/100.0, 2) + ",";
-  lastJsonData += "\"10.0\":" + String(random(0, 1001)/100.0, 2) + "},";
-  
-  lastJsonData += "\"typical_size\":" + String(random(0, 1001)/100.0, 2) + ",";
-  lastJsonData += "\"light\":" + String(random(10000, 11000)/10.0, 2) + ",";
-  lastJsonData += "\"temperature\":" + String(random(2500, 2580)/100.0, 2) + ",";
-  lastJsonData += "\"humidity\":" + String(random(500, 1001)/10.0, 2) + ",";
-  lastJsonData += "\"pressure\":" + String(random(9000, 10001)/10.0, 2);
-  lastJsonData += "}";
+lastJsonData = "{";
+lastJsonData += "\"device_id\": 1,";
+lastJsonData += "\"device_name\": \"estacao piloto\",";
 
-  //Serial.println(lastJsonData);
-}
+lastJsonData += "\"timestamp\": " + String(millis()) + ",";
+lastJsonData += "\"location\": {";
+lastJsonData += "\"lat\": -23.5,";
+lastJsonData += "\"lon\": -47.2";
+lastJsonData += "},";
+
+lastJsonData += "\"pm\":{";
+lastJsonData += "\"1.0\":" + String(random(0, 101)/100.0, 2) + ",";
+lastJsonData += "\"2.5\":" + String(random(0, 101)/100.0, 2) + ",";
+lastJsonData += "\"4.0\":" + String(random(0, 101)/100.0, 2) + ",";
+lastJsonData += "\"10.0\":" + String(random(0, 101)/100.0, 2) + "},";
+
+lastJsonData += "\"nc\":{";
+lastJsonData += "\"0.5\":" + String(random(0, 1001)/100.0, 2) + ",";
+lastJsonData += "\"1.0\":" + String(random(0, 1001)/100.0, 2) + ",";
+lastJsonData += "\"2.5\":" + String(random(0, 1001)/100.0, 2) + ",";
+lastJsonData += "\"4.0\":" + String(random(0, 1001)/100.0, 2) + ",";
+lastJsonData += "\"10.0\":" + String(random(0, 1001)/100.0, 2) + "},";
+
+lastJsonData += "\"typical_size\":" + String(random(0, 1001)/100.0, 2) + ",";
+lastJsonData += "\"light\":" + String(random(10000, 11000)/10.0, 2) + ",";
+lastJsonData += "\"temperature\":" + String(random(2500, 2580)/100.0, 2) + ",";
+lastJsonData += "\"humidity\":" + String(random(500, 1001)/10.0, 2) + ",";
+lastJsonData += "\"pressure\":" + String(random(9000, 10001)/10.0, 2);
+
+lastJsonData += "}";

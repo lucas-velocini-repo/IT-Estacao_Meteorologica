@@ -1,5 +1,5 @@
 # Server
-servidor_fastapi/DB
+server/banco.db
 
 # Python
 __pycache__/
