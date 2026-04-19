@@ -1,1 +1,17 @@
+# Server
 servidor_fastapi/DB
+
+# Python
+__pycache__/
+*.pyc
+
+# Ambiente virtual
+.env/
+
+# VS Code / IDEs
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db

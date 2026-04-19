@@ -37,7 +37,7 @@
      <widget class="QFrame" name="frmTopo">
       <property name="styleSheet">
        <string notr="true">QFrame{
-border-bottom: 0.5px solid #ebebeb;
+border-bottom: 0.5px solid rgba(235, 235, 235, 100);
 }</string>
       </property>
       <property name="frameShape">
@@ -72,7 +72,7 @@ border-bottom: 0.5px solid #ebebeb;
           <widget class="QLabel" name="lblTitulo">
            <property name="font">
             <font>
-             <family>Segoe UI</family>
+             <family>Segoe UI Semibold</family>
              <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
@@ -229,6 +229,417 @@ QLineEdit::placeholder {
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,15">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QScrollArea" name="scrBotoes">
+            <property name="styleSheet">
+             <string notr="true">QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QScrollBar:horizontal {
+    height: 6px;
+    background: transparent;
+}
+
+QScrollBar::handle:horizontal {
+    background: rgba(150, 150, 150, 120);
+    border-radius: 3px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: rgba(150, 150, 150, 180);
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0px;
+}</string>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>903</width>
+               <height>55</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QFrame" name="frmGraficosBotoes">
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+    background-color: rgb(245, 245, 245);
+    color: black;
+
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 10px;
+
+    padding: 8px 16px;
+
+    font-family: &quot;Segoe UI&quot;;
+    font-size: 13px;
+    font-weight: 500;
+
+    outline: none;
+}
+
+QPushButton:hover {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(190, 190, 190);
+}
+
+QPushButton:pressed {
+    background-color: rgb(230, 230, 230);
+    border: 1px solid rgb(180, 180, 180);
+}
+
+/* foco estilo moderno (igual line edit) */
+QPushButton:focus {
+    border: 1px solid #3daee9;
+}
+
+/* opcional: botão &quot;ativo/selecionado&quot; */
+QPushButton:checked {
+    background-color: rgb(225, 240, 252);
+    border: 1px solid #3daee9;
+}
+</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="btnDash">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Dashboard</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnTemperatura">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Temperatura</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnPressao">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Pressão</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnHumidade">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Humidade</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnLuminosidade">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Luminosidade</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnPM">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Particulados PM</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnNC">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Particulados NC</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btnDados">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>35</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Dados</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QFrame" name="frmGraficosDisplay">
+            <property name="styleSheet">
+             <string notr="true">QFrame {
+border-top: 1px solid rgba(38, 38, 38, 100);
+}
+
+/* remove qualquer borda interna */
+QStackedWidget {
+    border: none;
+}
+
+QStackedWidget &gt; QWidget {
+    border: none;
+}</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QStackedWidget" name="stackedWidget">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <widget class="QWidget" name="pageDash">
+                <widget class="QLabel" name="label">
+                 <property name="geometry">
+                  <rect>
+                   <x>320</x>
+                   <y>260</y>
+                   <width>151</width>
+                   <height>61</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>DASHBOARD</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pageTemperatura">
+                <widget class="QLabel" name="label_2">
+                 <property name="geometry">
+                  <rect>
+                   <x>340</x>
+                   <y>280</y>
+                   <width>141</width>
+                   <height>51</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>TEMPERATURA</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pagePressao">
+                <widget class="QLabel" name="label_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>350</x>
+                   <y>320</y>
+                   <width>121</width>
+                   <height>71</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>PRESSÂO</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pageHumidade">
+                <widget class="QLabel" name="label_4">
+                 <property name="geometry">
+                  <rect>
+                   <x>300</x>
+                   <y>280</y>
+                   <width>101</width>
+                   <height>61</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>HUMIDADE</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pageLuminosidade">
+                <widget class="QLabel" name="label_5">
+                 <property name="geometry">
+                  <rect>
+                   <x>320</x>
+                   <y>240</y>
+                   <width>171</width>
+                   <height>51</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>LUMINOSIDADE</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pagePM">
+                <widget class="QLabel" name="label_6">
+                 <property name="geometry">
+                  <rect>
+                   <x>276</x>
+                   <y>260</y>
+                   <width>161</width>
+                   <height>61</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>PARTICULADOS PM</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pageNC">
+                <widget class="QLabel" name="label_7">
+                 <property name="geometry">
+                  <rect>
+                   <x>350</x>
+                   <y>280</y>
+                   <width>241</width>
+                   <height>101</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>PARTICULADOS NC</string>
+                 </property>
+                </widget>
+               </widget>
+               <widget class="QWidget" name="pageDados">
+                <widget class="QLabel" name="label_8">
+                 <property name="geometry">
+                  <rect>
+                   <x>360</x>
+                   <y>250</y>
+                   <width>131</width>
+                   <height>71</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>DADOS BRUTOS</string>
+                 </property>
+                </widget>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -242,7 +653,7 @@ QLineEdit::placeholder {
      <x>0</x>
      <y>0</y>
      <width>1104</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
