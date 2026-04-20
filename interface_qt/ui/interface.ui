@@ -168,9 +168,15 @@ QPushButton:pressed {
        </property>
        <item>
         <widget class="QFrame" name="frmModulos">
+         <property name="minimumSize">
+          <size>
+           <width>340</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>300</width>
+           <width>350</width>
            <height>16777215</height>
           </size>
          </property>
@@ -180,12 +186,12 @@ QPushButton:pressed {
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,1">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
           <property name="leftMargin">
            <number>9</number>
           </property>
           <property name="topMargin">
-           <number>9</number>
+           <number>0</number>
           </property>
           <property name="rightMargin">
            <number>9</number>
@@ -209,16 +215,16 @@ QPushButton:pressed {
               <number>0</number>
              </property>
              <property name="topMargin">
-              <number>0</number>
+              <number>9</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
+              <number>5</number>
              </property>
              <item>
-              <widget class="QLineEdit" name="edtBusca">
+              <widget class="QLineEdit" name="inputBusca">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -269,13 +275,33 @@ QLineEdit::placeholder {
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frmListaModulos">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+           <widget class="QScrollArea" name="scrollDevices">
+            <property name="styleSheet">
+             <string notr="true">QScrollArea {
+    border: none;
+    background: transparent;
+}</string>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
             </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents_2">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>320</width>
+               <height>666</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_7"/>
+            </widget>
            </widget>
           </item>
          </layout>
