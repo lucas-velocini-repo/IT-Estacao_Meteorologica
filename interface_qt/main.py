@@ -82,8 +82,10 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         uic.loadUi("ui/interface.ui", self)
 
-        # inicia na dashboard
+        # ====== CONFIGURAÇÕES INICIAIS =====
         self.stackedWidget.setCurrentIndex(0)
+        self.selected_device_id = None
+        self.atualizar_estado_botoes()
 
         # ===== SCROLL HORIZONTAL (botões) =====
         self.scroll = self.findChild(QtWidgets.QScrollArea, "scrBotoes")
@@ -91,17 +93,47 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # ===== BOTÕES → PÁGINAS =====
         self.btnDash.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
-        self.btnTemperatura.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
-        self.btnPressao.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
-        self.btnHumidade.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
-        self.btnLuminosidade.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(4))
-        self.btnPM.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(5))
-        self.btnNC.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(6))
+        self.btnTemperatura.clicked.connect(lambda: self.trocar_pagina(1))
+        self.btnPressao.clicked.connect(lambda: self.trocar_pagina(2))
+        self.btnHumidade.clicked.connect(lambda: self.trocar_pagina(3))
+        self.btnLuminosidade.clicked.connect(lambda: self.trocar_pagina(4))
+        self.btnPM.clicked.connect(lambda: self.trocar_pagina(5))
+        self.btnNC.clicked.connect(lambda: self.trocar_pagina(6))
         self.btnDados.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(7))
+
+        # ====== CONECTANDO GRÁFICOS AOS BOTÕES ======
+        self.graficoTemperatura = self.findChild(pg.PlotWidget, "graficoTemperatura")
+        self.graficoPressao = self.findChild(pg.PlotWidget, "graficoPressao")
+        self.graficoHumidade = self.findChild(pg.PlotWidget, "graficoHumidade")
+        self.graficoLuminosidade = self.findChild(pg.PlotWidget, "graficoLuminosidade")
+        self.graficoPM = self.findChild(pg.PlotWidget, "graficoPM")
+        self.graficoNC = self.findChild(pg.PlotWidget, "graficoNC")
+
+        self.btnTemperaturaAtualizar.clicked.connect(
+            lambda: self.carregar_grafico("temperature", self.graficoTemperatura)
+        )
+        self.btnPressaoAtualizar.clicked.connect(
+            lambda: self.carregar_grafico("pressure", self.graficoPressao)
+        )
+        self.btnHumidadeAtualizar.clicked.connect(
+            lambda: self.carregar_grafico("humidity", self.graficoHumidade)
+        )
+        self.btnLuminosidadeAtualizar.clicked.connect(
+            lambda: self.carregar_grafico("light", self.graficoLuminosidade)
+        )
+        self.btnPMAtualizar.clicked.connect(
+            lambda: self.carregar_grafico("pm_2_5", self.graficoPM)
+        )
+        self.btnNCAtualizar.clicked.connect(
+            lambda: self.carregar_grafico("nc_1_0", self.graficoNC)
+        )
 
         # ===== LISTA DE DISPOSITIVOS =====
         self.scrollLista = self.findChild(QtWidgets.QScrollArea, "scrollDevices")
         self.inputBusca = self.findChild(QtWidgets.QLineEdit, "inputBusca")
+
+        self.lblTitulo = self.findChild(QtWidgets.QLabel, "lblTitulo")
+        self.lblDashEstacao = self.findChild(QtWidgets.QLabel, "lblDashEstacaoNome")
 
         self.container = QtWidgets.QWidget()
         self.layoutLista = QtWidgets.QVBoxLayout(self.container)
@@ -121,11 +153,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # ===== BUSCA EM TEMPO REAL =====
         self.inputBusca.textChanged.connect(self.filtrar_lista)
-        
-        #self.timer = QtCore.QTimer()
-        #self.timer.timeout.connect(self.carregar_devices)
-        #self.timer.start(5000)  # atualiza a cada 5s
-
 
         # ===== EXEMPLO GRÁFICO (pyqtgraph) =====
         self.graph = self.findChild(pg.PlotWidget, "graficoTemperatura")
@@ -136,15 +163,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graph.plot(x, y, pen='b')
 
         self.vb = self.graph.getViewBox()
-
-        def mouse_moved(evt):
-            pos = evt
-            if self.graph.sceneBoundingRect().contains(pos):
-                mousePoint = self.vb.mapSceneToView(pos)
-                print(mousePoint.x(), mousePoint.y())
-
-        self.graph.scene().sigMouseMoved.connect(mouse_moved)
         
+    def carregar_grafico(self, parametro, grafico):
+        if self.selected_device_id is None:
+            print("Selecione um dispositivo primeiro")
+            return
+
+        try:
+            url = f"http://127.0.0.1:8000/timeseries?device_id={self.selected_device_id}&parameter={parametro}&limit=50"
+
+            response = requests.get(url, timeout=2)
+            data = response.json()
+
+            y = data["values"]
+
+            if not y:
+                print("Sem dados")
+                return
+
+            x = list(range(len(y)))
+
+            grafico.clear()
+            grafico.plot(x, y, pen='c', symbol='o')
+
+        except Exception as e:
+            print("Erro:", e)
 
     # ===== SCROLL HORIZONTAL BOTÕES GRÁFICOS =====
     def eventFilter(self, source, event):
@@ -169,15 +212,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # ======= ATUALIZA A LISTA DE MODULOS ===========
     def atualizar_lista(self, devices):
-        # limpa lista atual
+        self.device_map = {} 
+
         for card in self.cards:
             card.deleteLater()
 
         self.cards.clear()
 
-        # adiciona novos
         for device in devices:
             device_id, name, lat, lon, *_ = device
+
+            # salva relação nome → id
+            self.device_map[name.lower()] = device_id
+
             self.add_device(name, lat, lon)
 
     # ===== ADICIONAR DISPOSITIVO LISTA MODULOS =====
@@ -200,8 +247,65 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 card.hide()
 
+    # ===== CLIQUE NO CARD DO DISPOSITIVO =====
     def on_card_clicked(self, name):
-        print(f"Clicou no dispositivo: {name}")
+        self.selected_device_id = self.device_map.get(name.lower())
+        self.lblTitulo.setText(f"Interface de monitoramento - {name.title()}")
+        self.lblDashEstacao.setText(f"{name.title()}")
+
+        print(f"Selecionado: {name} | ID: {self.selected_device_id}")
+        self.atualizar_estado_botoes()
+        self.atualizar_grafico_atual()
+
+    # ===== HABILITA/DESABILITA BOTÕES DE PARÂMETROS =====
+    def atualizar_estado_botoes(self):
+        sem_modulo = (self.selected_device_id is None)
+
+        self.btnTemperatura.setEnabled(not sem_modulo)
+        self.btnPressao.setEnabled(not sem_modulo)
+        self.btnHumidade.setEnabled(not sem_modulo)
+        self.btnLuminosidade.setEnabled(not sem_modulo)
+        self.btnPM.setEnabled(not sem_modulo)
+        self.btnNC.setEnabled(not sem_modulo)
+        self.btnDados.setEnabled(not sem_modulo)
+
+    # ===== RESETA INTERFACE (SEM DISPOSITIVO SELECIONADO) =====
+    def resetar_modulo(self):
+        self.selected_device_id = None
+        self.lblTitulo.setText("Interface de monitoramento")
+        self.atualizar_estado_botoes()
+
+    # self.btnDash.clicked.connect(self.resetar_modulo) #Conectar botão para resetar a seleção
+
+    # ===== ATUALIZA GRÁFICO ATUAL (APÓS SELEÇÃO DE DISPOSITIVO OU TELA) =====
+    def atualizar_grafico_atual(self):
+        if self.selected_device_id is None:
+            return
+
+        index = self.stackedWidget.currentIndex()
+
+        if index == 1:
+            self.carregar_grafico("temperature", self.graficoTemperatura)
+
+        elif index == 2:
+            self.carregar_grafico("pressure", self.graficoPressao)
+
+        elif index == 3:
+            self.carregar_grafico("humidity", self.graficoHumidade)
+
+        elif index == 4:
+            self.carregar_grafico("light", self.graficoLuminosidade)
+
+        elif index == 5:
+            self.carregar_grafico("pm_2_5", self.graficoPM)
+
+        elif index == 6:
+            self.carregar_grafico("nc_1_0", self.graficoNC)
+    
+    # ===== TROCA DE PÁGINA (ATUALIZA GRÁFICO) =====
+    def trocar_pagina(self, index):
+        self.stackedWidget.setCurrentIndex(index)
+        self.atualizar_grafico_atual()
 
 
 app = QtWidgets.QApplication(sys.argv)

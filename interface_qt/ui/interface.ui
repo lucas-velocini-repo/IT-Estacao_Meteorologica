@@ -485,6 +485,9 @@ QPushButton:checked {
                  </item>
                  <item>
                   <widget class="QPushButton" name="btnTemperatura">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
@@ -602,7 +605,7 @@ QPushButton:checked {
           <item>
            <widget class="QFrame" name="frmGraficosDisplay">
             <property name="styleSheet">
-             <string notr="true">QFrame {
+             <string notr="true">QFrame#frmGraficosDisplay {
 border-top: 1px solid rgba(38, 38, 38, 100);
 }
 
@@ -631,122 +634,679 @@ QStackedWidget &gt; QWidget {
              <item>
               <widget class="QStackedWidget" name="stackedWidget">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="pageDash">
-                <widget class="QLabel" name="label">
+                <widget class="QLabel" name="lblDashboardPage">
                  <property name="geometry">
                   <rect>
-                   <x>320</x>
-                   <y>260</y>
-                   <width>151</width>
-                   <height>61</height>
+                   <x>30</x>
+                   <y>10</y>
+                   <width>736</width>
+                   <height>23</height>
                   </rect>
                  </property>
-                 <property name="text">
-                  <string>DASHBOARD</string>
+                 <property name="font">
+                  <font>
+                   <family>Segoe UI Black</family>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
                  </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(38, 38, 38)</string>
+                 </property>
+                 <property name="text">
+                  <string>Dashboard</string>
+                 </property>
+                </widget>
+                <widget class="QWidget" name="">
+                 <property name="geometry">
+                  <rect>
+                   <x>30</x>
+                   <y>60</y>
+                   <width>263</width>
+                   <height>25</height>
+                  </rect>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_17">
+                  <item>
+                   <widget class="QLabel" name="lblDashEstacao">
+                    <property name="font">
+                     <font>
+                      <family>Segoe UI Black</family>
+                      <pointsize>10</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Estação:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="lblDashEstacaoNome">
+                    <property name="font">
+                     <font>
+                      <family>Segoe UI</family>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Selecione uma estação...</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </widget>
                <widget class="QWidget" name="pageTemperatura">
-                <widget class="QLabel" name="label_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>20</x>
-                   <y>10</y>
-                   <width>141</width>
-                   <height>51</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>TEMPERATURA</string>
-                 </property>
-                </widget>
-                <widget class="PlotWidget" name="graficoTemperatura" native="true">
-                 <property name="geometry">
-                  <rect>
-                   <x>80</x>
-                   <y>100</y>
-                   <width>591</width>
-                   <height>421</height>
-                  </rect>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,1,1,8">
+                 <item>
+                  <widget class="QLabel" name="lblTemperaturaPage">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI Black</family>
+                     <pointsize>10</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(38, 38, 38)</string>
+                   </property>
+                   <property name="text">
+                    <string>Temperatura</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmTemperaturaDatas">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <item>
+                     <widget class="QDateEdit" name="dataTemperaturaInicio"/>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>515</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QDateEdit" name="dataTemperaturaFim"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmTemperaturaPontos">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_6">
+                    <item>
+                     <widget class="QSpinBox" name="spinTemperaturaPontos">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>50</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_3">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>550</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnTemperaturaAtualizar">
+                      <property name="text">
+                       <string>Atualizar</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PlotWidget" name="graficoTemperatura" native="true"/>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="pagePressao">
-                <widget class="QLabel" name="label_3">
-                 <property name="geometry">
-                  <rect>
-                   <x>350</x>
-                   <y>320</y>
-                   <width>121</width>
-                   <height>71</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>PRESSÂO</string>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,1,1,8">
+                 <item>
+                  <widget class="QLabel" name="lblPressaoPage">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI Black</family>
+                     <pointsize>10</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(38, 38, 38)</string>
+                   </property>
+                   <property name="text">
+                    <string>Pressão</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmPressaoDatas">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_7">
+                    <item>
+                     <widget class="QDateEdit" name="dataPressaoInicio"/>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_5">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>515</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QDateEdit" name="dataPressaoFim"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmPresaoPontos">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_12">
+                    <item>
+                     <widget class="QSpinBox" name="spinPressaoPontos">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>50</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_10">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>550</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnPressaoAtualizar">
+                      <property name="text">
+                       <string>Atualizar</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PlotWidget" name="graficoPressao" native="true"/>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="pageHumidade">
-                <widget class="QLabel" name="label_4">
-                 <property name="geometry">
-                  <rect>
-                   <x>300</x>
-                   <y>280</y>
-                   <width>101</width>
-                   <height>61</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>HUMIDADE</string>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_10" stretch="0,1,1,8">
+                 <item>
+                  <widget class="QLabel" name="lblHumidadePage">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI Black</family>
+                     <pointsize>10</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(38, 38, 38)</string>
+                   </property>
+                   <property name="text">
+                    <string>Humidade</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmHumidadeDatas">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_8">
+                    <item>
+                     <widget class="QDateEdit" name="dataHumidadeInicio"/>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_6">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>515</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QDateEdit" name="dataHumidadeFim"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmHumidadePontos">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_13">
+                    <item>
+                     <widget class="QSpinBox" name="spinHumidadePontos">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>50</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_11">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>550</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnHumidadeAtualizar">
+                      <property name="text">
+                       <string>Atualizar</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PlotWidget" name="graficoHumidade" native="true"/>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="pageLuminosidade">
-                <widget class="QLabel" name="label_5">
-                 <property name="geometry">
-                  <rect>
-                   <x>320</x>
-                   <y>240</y>
-                   <width>171</width>
-                   <height>51</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>LUMINOSIDADE</string>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,1,1,8">
+                 <item>
+                  <widget class="QLabel" name="lblLuminosidadePage">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI Black</family>
+                     <pointsize>10</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(38, 38, 38)</string>
+                   </property>
+                   <property name="text">
+                    <string>Luminosidade</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmLuminosidadeDatas">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <item>
+                     <widget class="QDateEdit" name="dataLuminosidadeInicio"/>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_7">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>515</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QDateEdit" name="dataLuminosidadeFim"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmLuminosidadePontos">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_14">
+                    <item>
+                     <widget class="QSpinBox" name="spinLuminosidadePontos">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>50</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_12">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>550</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnLuminosidadeAtualizar">
+                      <property name="text">
+                       <string>Atualizar</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PlotWidget" name="graficoLuminosidade" native="true"/>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="pagePM">
-                <widget class="QLabel" name="label_6">
-                 <property name="geometry">
-                  <rect>
-                   <x>276</x>
-                   <y>260</y>
-                   <width>161</width>
-                   <height>61</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>PARTICULADOS PM</string>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_12" stretch="0,1,1,8">
+                 <item>
+                  <widget class="QLabel" name="lblPMPage">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI Black</family>
+                     <pointsize>10</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(38, 38, 38)</string>
+                   </property>
+                   <property name="text">
+                    <string>Particulados PM</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmPMDatas">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_10">
+                    <item>
+                     <widget class="QDateEdit" name="dataPMInicio"/>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_8">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>515</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QDateEdit" name="dataPMFim"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmPMPontos">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_15">
+                    <item>
+                     <widget class="QSpinBox" name="spinPMPontos">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>50</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_13">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>550</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnPMAtualizar">
+                      <property name="text">
+                       <string>Atualizar</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PlotWidget" name="graficoPM" native="true"/>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="pageNC">
-                <widget class="QLabel" name="label_7">
-                 <property name="geometry">
-                  <rect>
-                   <x>350</x>
-                   <y>280</y>
-                   <width>241</width>
-                   <height>101</height>
-                  </rect>
-                 </property>
-                 <property name="text">
-                  <string>PARTICULADOS NC</string>
-                 </property>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_13" stretch="0,1,1,8">
+                 <item>
+                  <widget class="QLabel" name="lblParticuladosNC">
+                   <property name="font">
+                    <font>
+                     <family>Segoe UI Black</family>
+                     <pointsize>10</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(38, 38, 38)</string>
+                   </property>
+                   <property name="text">
+                    <string>Particulados NC</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmNCDatas">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_11">
+                    <item>
+                     <widget class="QDateEdit" name="dataNCInicio"/>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_9">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>515</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QDateEdit" name="dataNCFim"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frmNCPontos">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_16">
+                    <item>
+                     <widget class="QSpinBox" name="spinNCPontos">
+                      <property name="maximum">
+                       <number>1000</number>
+                      </property>
+                      <property name="singleStep">
+                       <number>5</number>
+                      </property>
+                      <property name="value">
+                       <number>50</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_14">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>550</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnNCAtualizar">
+                      <property name="text">
+                       <string>Atualizar</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="PlotWidget" name="graficoNC" native="true"/>
+                 </item>
+                </layout>
                </widget>
                <widget class="QWidget" name="pageDados">
                 <widget class="QLabel" name="label_8">

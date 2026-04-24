@@ -148,3 +148,30 @@ def get_measurement_values(measurement_id: int):
     conn.close()
 
     return rows
+
+
+@app.get("/timeseries")
+def get_timeseries(device_id: int, parameter: str, limit: int = 100):
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT m.timestamp, mv.value
+        FROM measurement_values mv
+        JOIN measurements m ON mv.measurement_id = m.id
+        WHERE m.device_id = ? AND mv.parameter = ?
+        ORDER BY m.timestamp ASC
+        LIMIT ?
+    """, (device_id, parameter, limit))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    # separa em listas
+    timestamps = [r[0] for r in rows]
+    values = [r[1] for r in rows]
+
+    return {
+        "timestamps": timestamps,
+        "values": values
+    }
