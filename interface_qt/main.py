@@ -1,6 +1,7 @@
 import sys
 from PyQt6 import QtWidgets, QtGui, QtCore, uic
 import requests
+import pyqtgraph as pg
 
 
 class DeviceCard(QtWidgets.QFrame):
@@ -81,6 +82,9 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         uic.loadUi("ui/interface.ui", self)
 
+        # inicia na dashboard
+        self.stackedWidget.setCurrentIndex(0)
+
         # ===== SCROLL HORIZONTAL (botões) =====
         self.scroll = self.findChild(QtWidgets.QScrollArea, "scrBotoes")
         self.scroll.viewport().installEventFilter(self)
@@ -121,6 +125,25 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.timer = QtCore.QTimer()
         #self.timer.timeout.connect(self.carregar_devices)
         #self.timer.start(5000)  # atualiza a cada 5s
+
+
+        # ===== EXEMPLO GRÁFICO (pyqtgraph) =====
+        self.graph = self.findChild(pg.PlotWidget, "graficoTemperatura")
+
+        x = [1, 2, 3, 4]
+        y = [10, 20, 15, 30]
+
+        self.graph.plot(x, y, pen='b')
+
+        self.vb = self.graph.getViewBox()
+
+        def mouse_moved(evt):
+            pos = evt
+            if self.graph.sceneBoundingRect().contains(pos):
+                mousePoint = self.vb.mapSceneToView(pos)
+                print(mousePoint.x(), mousePoint.y())
+
+        self.graph.scene().sigMouseMoved.connect(mouse_moved)
         
 
     # ===== SCROLL HORIZONTAL BOTÕES GRÁFICOS =====
