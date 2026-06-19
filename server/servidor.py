@@ -121,14 +121,15 @@ def get_measurements():
     cursor.execute("""
         SELECT m.id, m.device_id, m.timestamp
         FROM measurements m
-        ORDER BY m.id DESC
-        LIMIT 10
+        WHERE m.id IN (
+            SELECT MAX(id)
+            FROM measurements
+            GROUP BY device_id
+        )
+        ORDER BY m.timestamp DESC
     """)
-
     rows = cursor.fetchall()
-
     conn.close()
-
     return rows
 
 
@@ -191,3 +192,22 @@ def get_timeseries(device_id: int, parameter: str, limit: int = 100, start_date:
         "timestamps": timestamps,
         "values": values
     }
+
+# GET - medições de um dispositivo específico (para histórico)
+@app.get("/measurements-by-device/{device_id}")
+def get_measurements_by_device(device_id: int, limit: int = 50):
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT m.id, m.device_id, m.timestamp
+        FROM measurements m
+        WHERE m.device_id = ?
+        ORDER BY m.timestamp DESC
+        LIMIT ?
+    """, (device_id, limit))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return rows
