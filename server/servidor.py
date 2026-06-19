@@ -3,6 +3,7 @@
 import os
 import sqlite3
 from fastapi import FastAPI
+from datetime import datetime, timedelta
 
 app = FastAPI()
 
@@ -151,23 +152,38 @@ def get_measurement_values(measurement_id: int):
 
 
 @app.get("/timeseries")
-def get_timeseries(device_id: int, parameter: str, limit: int = 100):
+def get_timeseries(device_id: int, parameter: str, limit: int = 100, start_date: str = None, end_date: str = None):
     conn = get_conn()
     cursor = conn.cursor()
 
-    cursor.execute("""
+    query = """
         SELECT m.timestamp, mv.value
         FROM measurement_values mv
         JOIN measurements m ON mv.measurement_id = m.id
         WHERE m.device_id = ? AND mv.parameter = ?
-        ORDER BY m.timestamp ASC
-        LIMIT ?
-    """, (device_id, parameter, limit))
+    """
+    params = [device_id, parameter]
 
+    # Se start_date é "today", usa a data de hoje
+    if start_date == "today":
+        today = datetime.now().date()
+        start_date = f"{today} 00:00:00"
+        end_date = f"{today} 23:59:59"
+    
+    if start_date:
+        query += " AND m.timestamp >= ?"
+        params.append(start_date)
+    
+    if end_date:
+        query += " AND m.timestamp <= ?"
+        params.append(end_date)
+
+    query += f" ORDER BY m.timestamp ASC LIMIT {limit}"
+
+    cursor.execute(query, params)
     rows = cursor.fetchall()
     conn.close()
 
-    # separa em listas
     timestamps = [r[0] for r in rows]
     values = [r[1] for r in rows]
 
