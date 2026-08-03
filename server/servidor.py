@@ -1,9 +1,13 @@
-# uvicorn servidor:app --reload
+#uvicorn servidor:app --reload
+#ou
+#uvicorn servidor:app --reload --host 0.0.0.0 --port 8000
 
 import os
 import sqlite3
-from fastapi import FastAPI
-from datetime import datetime, timedelta
+import time
+from typing import Optional
+
+from fastapi import FastAPI, Query
 
 app = FastAPI()
 
@@ -14,6 +18,161 @@ SCHEMA_PATH = "../database/schema.sql"
 def get_conn():
     return sqlite3.connect(DB)
 
+
+def ensure_measurement_time_columns():
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    columns = {
+        row[1]
+        for row in cursor.execute(
+            "PRAGMA table_info(measurements)"
+        ).fetchall()
+    }
+
+    if "measured_at" not in columns:
+        cursor.execute(
+            """
+            ALTER TABLE measurements
+            ADD COLUMN measured_at INTEGER
+            """
+        )
+
+    if "received_at" not in columns:
+        cursor.execute(
+            """
+            ALTER TABLE measurements
+            ADD COLUMN received_at INTEGER
+            """
+        )
+
+    current_epoch = int(time.time())
+
+    # Migração dos registros antigos.
+    # A antiga coluna timestamp foi criada em UTC pelo SQLite.
+    if "timestamp" in columns:
+        cursor.execute(
+            """
+            UPDATE measurements
+            SET measured_at = COALESCE(
+                measured_at,
+                CAST(strftime('%s', timestamp) AS INTEGER)
+            )
+            """
+        )
+
+        cursor.execute(
+            """
+            UPDATE measurements
+            SET received_at = COALESCE(
+                received_at,
+                CAST(strftime('%s', timestamp) AS INTEGER)
+            )
+            """
+        )
+    else:
+        cursor.execute(
+            """
+            UPDATE measurements
+            SET measured_at = COALESCE(
+                measured_at,
+                ?
+            )
+            """,
+            (current_epoch,)
+        )
+
+        cursor.execute(
+            """
+            UPDATE measurements
+            SET received_at = COALESCE(
+                received_at,
+                ?
+            )
+            """,
+            (current_epoch,)
+        )
+
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS
+        idx_measurements_device_measured_at
+        ON measurements(device_id, measured_at)
+        """
+    )
+
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS
+        idx_measurement_values_measurement
+        ON measurement_values(measurement_id)
+        """
+    )
+
+    cursor.execute(
+        """
+        CREATE INDEX IF NOT EXISTS
+        idx_measurement_values_parameter_measurement
+        ON measurement_values(parameter, measurement_id)
+        """
+    )
+
+    conn.commit()
+    conn.close()
+
+    print(
+        "Colunas de horário e índices verificados."
+    )
+
+
+def ensure_indexes():
+    conn = get_conn()
+
+    conn.executescript(
+        """
+        CREATE INDEX IF NOT EXISTS
+            idx_measurements_device_timestamp
+        ON measurements(device_id, timestamp);
+
+        CREATE INDEX IF NOT EXISTS
+            idx_measurement_values_measurement
+        ON measurement_values(measurement_id);
+
+        CREATE INDEX IF NOT EXISTS
+            idx_measurement_values_parameter_measurement
+        ON measurement_values(parameter, measurement_id);
+        """
+    )
+
+    conn.close()
+
+def normalize_measured_at(
+    raw_timestamp,
+    received_at: int
+):
+    try:
+        measured_at = int(raw_timestamp)
+    except (TypeError, ValueError):
+        return received_at, "server"
+
+    # 2020-01-01 UTC.
+    # Valores menores normalmente indicam millis()/1000
+    # ou relógio ainda não sincronizado.
+    minimum_valid_timestamp = 1577836800
+
+    # Aceita pequena diferença de relógio, mas rejeita
+    # datas mais de um dia no futuro.
+    maximum_valid_timestamp = (
+        received_at + 24 * 60 * 60
+    )
+
+    if (
+        measured_at < minimum_valid_timestamp
+        or measured_at > maximum_valid_timestamp
+    ):
+        return received_at, "server"
+
+    return measured_at, "device"
 
 # Inicialização automática do banco
 def init_db():
@@ -32,6 +191,10 @@ def startup():
     if not os.path.exists(DB):
         init_db()
 
+    ensure_measurement_time_columns()
+
+    ensure_indexes()
+
 
 # POST - receber dados (seu código)
 @app.post("/dados")
@@ -45,6 +208,18 @@ async def receber_dados(data: dict):
     lat = data.get("location", {}).get("lat", 0)
     lon = data.get("location", {}).get("lon", 0)
 
+    received_at = int(time.time())
+
+    measured_at, time_source = (
+        normalize_measured_at(
+            data.get(
+                "measured_at",
+                data.get("timestamp")
+            ),
+            received_at
+        )
+    )
+
     # insere ou atualiza
     cursor.execute("""
         INSERT INTO devices (id, name, latitude, longitude)
@@ -56,10 +231,21 @@ async def receber_dados(data: dict):
     """, (device_id, device_name, lat, lon))
 
     # cria medição
-    cursor.execute("""
-        INSERT INTO measurements (device_id)
-        VALUES (?)
-    """, (device_id,))
+    cursor.execute(
+        """
+        INSERT INTO measurements (
+            device_id,
+            measured_at,
+            received_at
+        )
+        VALUES (?, ?, ?)
+        """,
+        (
+            device_id,
+            measured_at,
+            received_at
+        )
+    )
 
     measurement_id = cursor.lastrowid
 
@@ -95,7 +281,13 @@ async def receber_dados(data: dict):
     conn.commit()
     conn.close()
 
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "measurement_id": measurement_id,
+        "measured_at": measured_at,
+        "received_at": received_at,
+        "time_source": time_source
+    }
 
 
 # GET - listar dispositivos
@@ -118,16 +310,21 @@ def get_measurements():
     conn = get_conn()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT m.id, m.device_id, m.timestamp
+    cursor.execute(
+        """
+        SELECT
+            m.id,
+            m.device_id,
+            m.measured_at
         FROM measurements m
         WHERE m.id IN (
             SELECT MAX(id)
             FROM measurements
             GROUP BY device_id
         )
-        ORDER BY m.timestamp DESC
-    """)
+        ORDER BY m.measured_at DESC
+        """
+    )
     rows = cursor.fetchall()
     conn.close()
     return rows
@@ -153,61 +350,181 @@ def get_measurement_values(measurement_id: int):
 
 
 @app.get("/timeseries")
-def get_timeseries(device_id: int, parameter: str, limit: int = 100, start_date: str = None, end_date: str = None):
+def get_timeseries(
+    device_id: int,
+    parameter: str,
+
+    limit: int = Query(
+        default=100,
+        ge=2,
+        le=300
+    ),
+
+    start_timestamp: Optional[int] = None,
+    end_timestamp: Optional[int] = None
+):
     conn = get_conn()
     cursor = conn.cursor()
 
-    query = """
-        SELECT m.timestamp, mv.value
-        FROM measurement_values mv
-        JOIN measurements m ON mv.measurement_id = m.id
-        WHERE m.device_id = ? AND mv.parameter = ?
+    conditions = [
+        "m.device_id = ?",
+        "mv.parameter = ?"
+    ]
+
+    params = [
+        device_id,
+        parameter
+    ]
+
+    if start_timestamp is not None:
+        conditions.append(
+            "m.measured_at >= ?"
+        )
+
+        params.append(start_timestamp)
+
+    if end_timestamp is not None:
+        conditions.append(
+            "m.measured_at <= ?"
+        )
+
+        params.append(end_timestamp)
+
+    where_clause = " AND ".join(
+        conditions
+    )
+
+    query = f"""
+        SELECT measured_at, value
+        FROM (
+            SELECT
+                m.measured_at AS measured_at,
+                mv.value AS value
+            FROM measurement_values mv
+            JOIN measurements m
+                ON mv.measurement_id = m.id
+            WHERE {where_clause}
+            ORDER BY m.measured_at DESC
+            LIMIT ?
+        )
+        ORDER BY measured_at ASC
     """
-    params = [device_id, parameter]
 
-    # Se start_date é "today", usa a data de hoje
-    if start_date == "today":
-        today = datetime.now().date()
-        start_date = f"{today} 00:00:00"
-        end_date = f"{today} 23:59:59"
-    
-    if start_date:
-        query += " AND m.timestamp >= ?"
-        params.append(start_date)
-    
-    if end_date:
-        query += " AND m.timestamp <= ?"
-        params.append(end_date)
+    params.append(limit)
 
-    query += f" ORDER BY m.timestamp ASC LIMIT {limit}"
+    cursor.execute(
+        query,
+        params
+    )
 
-    cursor.execute(query, params)
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    return {
+        "timestamps": [
+            row[0]
+            for row in rows
+        ],
+        "values": [
+            row[1]
+            for row in rows
+        ]
+    }
+
+@app.get("/device-measurements/{device_id}")
+def get_complete_device_measurements(
+    device_id: int,
+    limit: int = Query(default=50, ge=1, le=500)
+):
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            m.id,
+            m.device_id,
+            m.timestamp,
+            mv.parameter,
+            mv.value
+        FROM (
+            SELECT
+                id,
+                device_id,
+                timestamp
+            FROM measurements
+            WHERE device_id = ?
+            ORDER BY id DESC
+            LIMIT ?
+        ) AS m
+        LEFT JOIN measurement_values mv
+            ON mv.measurement_id = m.id
+        ORDER BY
+            m.id DESC,
+            mv.parameter ASC
+        """,
+        (device_id, limit)
+    )
+
     rows = cursor.fetchall()
     conn.close()
 
-    timestamps = [r[0] for r in rows]
-    values = [r[1] for r in rows]
+    measurements = {}
 
-    return {
-        "timestamps": timestamps,
-        "values": values
-    }
+    for (
+        measurement_id,
+        row_device_id,
+        timestamp,
+        parameter,
+        value
+    ) in rows:
+        if measurement_id not in measurements:
+            measurements[measurement_id] = {
+                "measurement_id": measurement_id,
+                "device_id": row_device_id,
+                "timestamp": timestamp,
+                "values": {}
+            }
 
-# GET - medições de um dispositivo específico (para histórico)
-@app.get("/measurements-by-device/{device_id}")
-def get_measurements_by_device(device_id: int, limit: int = 50):
+        if parameter is not None:
+            measurements[measurement_id]["values"][parameter] = value
+
+    return list(measurements.values())
+
+@app.get(
+    "/measurements-by-device/{device_id}"
+)
+def get_measurements_by_device(
+    device_id: int,
+    limit: int = Query(
+        default=50,
+        ge=1,
+        le=300
+    )
+):
     conn = get_conn()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT m.id, m.device_id, m.timestamp
+    cursor.execute(
+        """
+        SELECT
+            m.id,
+            m.device_id,
+            m.measured_at
         FROM measurements m
         WHERE m.device_id = ?
-        ORDER BY m.timestamp DESC
+        ORDER BY m.measured_at DESC
         LIMIT ?
-    """, (device_id, limit))
+        """,
+        (
+            device_id,
+            limit
+        )
+    )
 
     rows = cursor.fetchall()
+
     conn.close()
 
     return rows

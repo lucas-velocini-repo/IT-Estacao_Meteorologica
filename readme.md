@@ -55,72 +55,25 @@ pip install -r requerements.txt
 ```bash
 deactivate
 ```
-
----
-
-### Configurar a interface (Qt)
-
-1. Volte para a raiz do projeto:
-
-```bash
-cd ..
-```
-
-2. Entre na pasta da interface:
-
-```bash
-cd interface_qt
-```
-
-3. Crie o ambiente virtual:
-
-```bash
-python -m venv .env
-```
-
-4. Ative o ambiente:
-
-```bash
-source .env/Scripts/activate
-```
-
-5. Instale as dependências:
-
-```bash
-pip install -r requerements.txt
-```
-
 ---
 
 ## Executando o projeto
 
 ### Rodar o servidor
 
-1. Volte para a raiz:
-
-```bash
-cd ..
-```
-
-2. Certifique-se de que o ambiente está desativado:
-
-```bash
-deactivate
-```
-
-3. Entre na pasta do servidor:
+1. Entre na pasta do servidor:
 
 ```bash
 cd server
 ```
 
-4. Ative o ambiente:
+2. Ative o ambiente:
 
 ```bash
 source .env/Scripts/activate
 ```
 
-5. Execute o servidor:
+3. Execute o servidor:
 
 ```bash
 uvicorn servidor:app --reload
@@ -129,6 +82,7 @@ uvicorn servidor:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ---
+
 
 ## Testando a API
 
@@ -174,35 +128,6 @@ http://127.0.0.1:8000/docs#
 
 ---
 
-## Rodando a interface gráfica
-
-1. Abra **outro terminal Git Bash** na raiz do projeto.
-
-2. Entre na pasta da interface:
-
-```bash
-cd interface_qt
-```
-
-3. Certifique-se de que o ambiente está desativado:
-
-```bash
-deactivate
-```
-
-4. Ative o ambiente:
-
-```bash
-source .env/Scripts/activate
-```
-
-5. Execute a aplicação:
-
-```bash
-python main.py
-```
-
----
 
 ## Observações
 

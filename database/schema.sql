@@ -7,11 +7,17 @@ CREATE TABLE devices (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Cada envio do Arduino (uma "leitura")
+-- Cada envio da estação representa uma medição
 CREATE TABLE measurements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     device_id INTEGER NOT NULL,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    -- Momento em que a estação realizou a medição
+    measured_at INTEGER NOT NULL,
+
+    -- Momento em que o servidor recebeu a medição
+    received_at INTEGER NOT NULL,
+
     FOREIGN KEY (device_id) REFERENCES devices(id)
 );
 
