@@ -14,10 +14,8 @@ app = FastAPI()
 DB = "banco.db"
 SCHEMA_PATH = "../database/schema.sql"
 
-
 def get_conn():
     return sqlite3.connect(DB)
-
 
 def ensure_measurement_time_columns():
     conn = get_conn()
@@ -124,28 +122,6 @@ def ensure_measurement_time_columns():
         "Colunas de horário e índices verificados."
     )
 
-
-def ensure_indexes():
-    conn = get_conn()
-
-    conn.executescript(
-        """
-        CREATE INDEX IF NOT EXISTS
-            idx_measurements_device_timestamp
-        ON measurements(device_id, timestamp);
-
-        CREATE INDEX IF NOT EXISTS
-            idx_measurement_values_measurement
-        ON measurement_values(measurement_id);
-
-        CREATE INDEX IF NOT EXISTS
-            idx_measurement_values_parameter_measurement
-        ON measurement_values(parameter, measurement_id);
-        """
-    )
-
-    conn.close()
-
 def normalize_measured_at(
     raw_timestamp,
     received_at: int
@@ -184,8 +160,6 @@ def init_db():
     conn.close()
     print("Banco criado com sucesso!")
 
-
-# Executa ao iniciar o servidor
 @app.on_event("startup")
 def startup():
     if not os.path.exists(DB):
@@ -193,10 +167,7 @@ def startup():
 
     ensure_measurement_time_columns()
 
-    ensure_indexes()
-
-
-# POST - receber dados (seu código)
+# POST - receber dados 
 @app.post("/dados")
 async def receber_dados(data: dict):
     conn = get_conn()
@@ -289,8 +260,6 @@ async def receber_dados(data: dict):
         "time_source": time_source
     }
 
-
-# GET - listar dispositivos
 @app.get("/devices")
 def get_devices():
     conn = get_conn()
@@ -303,8 +272,6 @@ def get_devices():
 
     return rows
 
-
-# GET - últimas medições
 @app.get("/measurements")
 def get_measurements():
     conn = get_conn()
@@ -328,26 +295,6 @@ def get_measurements():
     rows = cursor.fetchall()
     conn.close()
     return rows
-
-
-# GET - valores de uma medição específica
-@app.get("/measurement/{measurement_id}")
-def get_measurement_values(measurement_id: int):
-    conn = get_conn()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT parameter, value
-        FROM measurement_values
-        WHERE measurement_id = ?
-    """, (measurement_id,))
-
-    rows = cursor.fetchall()
-
-    conn.close()
-
-    return rows
-
 
 @app.get("/timeseries")
 def get_timeseries(
@@ -435,68 +382,6 @@ def get_timeseries(
 @app.get("/device-measurements/{device_id}")
 def get_complete_device_measurements(
     device_id: int,
-    limit: int = Query(default=50, ge=1, le=500)
-):
-    conn = get_conn()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        SELECT
-            m.id,
-            m.device_id,
-            m.timestamp,
-            mv.parameter,
-            mv.value
-        FROM (
-            SELECT
-                id,
-                device_id,
-                timestamp
-            FROM measurements
-            WHERE device_id = ?
-            ORDER BY id DESC
-            LIMIT ?
-        ) AS m
-        LEFT JOIN measurement_values mv
-            ON mv.measurement_id = m.id
-        ORDER BY
-            m.id DESC,
-            mv.parameter ASC
-        """,
-        (device_id, limit)
-    )
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    measurements = {}
-
-    for (
-        measurement_id,
-        row_device_id,
-        timestamp,
-        parameter,
-        value
-    ) in rows:
-        if measurement_id not in measurements:
-            measurements[measurement_id] = {
-                "measurement_id": measurement_id,
-                "device_id": row_device_id,
-                "timestamp": timestamp,
-                "values": {}
-            }
-
-        if parameter is not None:
-            measurements[measurement_id]["values"][parameter] = value
-
-    return list(measurements.values())
-
-@app.get(
-    "/measurements-by-device/{device_id}"
-)
-def get_measurements_by_device(
-    device_id: int,
     limit: int = Query(
         default=50,
         ge=1,
@@ -511,11 +396,29 @@ def get_measurements_by_device(
         SELECT
             m.id,
             m.device_id,
-            m.measured_at
-        FROM measurements m
-        WHERE m.device_id = ?
-        ORDER BY m.measured_at DESC
-        LIMIT ?
+            m.measured_at,
+            m.received_at,
+            mv.parameter,
+            mv.value
+        FROM (
+            SELECT
+                id,
+                device_id,
+                measured_at,
+                received_at
+            FROM measurements
+            WHERE device_id = ?
+            ORDER BY
+                measured_at DESC,
+                id DESC
+            LIMIT ?
+        ) AS m
+        LEFT JOIN measurement_values mv
+            ON mv.measurement_id = m.id
+        ORDER BY
+            m.measured_at DESC,
+            m.id DESC,
+            mv.parameter ASC
         """,
         (
             device_id,
@@ -524,7 +427,38 @@ def get_measurements_by_device(
     )
 
     rows = cursor.fetchall()
-
     conn.close()
 
-    return rows
+    measurements = {}
+
+    for (
+        measurement_id,
+        row_device_id,
+        measured_at,
+        received_at,
+        parameter,
+        value
+    ) in rows:
+        if measurement_id not in measurements:
+            measurements[measurement_id] = {
+                "measurement_id": measurement_id,
+                "device_id": row_device_id,
+
+                # Mantemos o nome timestamp no JSON
+                # para não precisar alterar mais partes do React.
+                "timestamp": measured_at,
+
+                "measured_at": measured_at,
+                "received_at": received_at,
+
+                "values": {}
+            }
+
+        if parameter is not None:
+            measurements[
+                measurement_id
+            ]["values"][parameter] = value
+
+    return list(
+        measurements.values()
+    )
