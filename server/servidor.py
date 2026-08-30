@@ -1,6 +1,6 @@
 #uvicorn servidor:app --reload
 #ou
-#uvicorn servidor:app --reload --host 0.0.0.0 --port 8000
+#uvicorn servidor:app --host 0.0.0.0 --port 8000
 
 import os
 import sqlite3
